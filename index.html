@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="style.css" />
+    <title>Upload Home Card Images</title>
+  </head>
+  <body>
+    <h1>Upload Home Card Images</h1>
+    <form id="upload-form">
+      <label for="title">Title:</label>
+      <select name="title" id="title" required>
+        <option value="venters">Venters</option>
+        <option value="listeners">Listeners</option>
+        <option value="community">Community</option>
+      </select><br /><br />
+
+      <label for="image">Select Image(s):</label>
+      <input
+        type="file"
+        id="image"
+        name="image"
+        accept="image/*"
+        multiple
+        required
+      /><br /><br />
+
+      <button id="upload-btn" type="submit">Upload</button>
+    </form>
+
+    <p id="status"></p>
+
+    <script type="module">
+      import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+
+      const SUPABASE_URL = "https://psgfhddunztqsydbbbth.supabase.co";
+      const SUPABASE_KEY =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBzZ2ZoZGR1bnp0cXN5ZGJiYnRoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTEyMjM4MzUsImV4cCI6MjA2Njc5OTgzNX0.LyJoav_LgHRCnjk4PiBaEGqncykKAd-1OGzKfpZlxtc";
+
+      const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+      const form = document.getElementById("upload-form");
+      const status = document.getElementById("status");
+      const uploadBtn = document.getElementById("upload-btn");
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const title = document.getElementById("title").value;
+        const files = document.getElementById("image").files;
+
+        if (!title || files.length === 0) {
+          alert("Please select a title and at least one image.");
+          return;
+        }
+
+        uploadBtn.disabled = true;
+        uploadBtn.textContent = "Uploading...";
+        status.textContent = "";
+
+        const imageUrls = [];
+
+        for (const file of files) {
+          const fileName = `${Date.now()}-${file.name}`;
+          const filePath = `${title}/${fileName}`;
+
+          const { data, error } = await supabase.storage
+            .from("home-cards")
+            .upload(filePath, file);
+
+          if (error) {
+            console.error("Upload error:", error);
+            alert(`Upload failed for ${file.name}`);
+            uploadBtn.disabled = false;
+            uploadBtn.textContent = "Upload";
+            return;
+          }
+
+          const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/home-cards/${filePath}`;
+          imageUrls.push(publicUrl);
+        }
+
+        // Save image URLs to your database table
+        const { error: dbError } = await supabase
+          .from("home_card_images")
+          .insert(imageUrls.map((url) => ({ title, image_url: url })));
+
+        if (dbError) {
+          console.error("Database error:", dbError);
+          alert("Failed to save to database.");
+        } else {
+          alert("All images uploaded and saved successfully!");
+          form.reset();
+        }
+
+        uploadBtn.disabled = false;
+        uploadBtn.textContent = "Upload";
+      });
+    </script>
+  </body>
+</html>
