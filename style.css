@@ -1,51 +1,79 @@
 body {
-      font-family: Arial, sans-serif;
-      max-width: 500px;
-      margin: 40px auto;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
-      background: #fdfdfd;
-    }
+  font-family: Arial, sans-serif;
+  max-width: 500px;
+  width: 90%; /* 👈 keeps it fluid on small screens */
+  margin: 40px auto;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
+  background: #fdfdfd;
+}
 
-    h2 {
-      text-align: center;
-      margin-bottom: 20px;
-    }
+h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 1.6rem;
+}
 
-    label {
-      font-weight: bold;
-    }
+label {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 5px;
+}
 
-    select, input[type="file"], button {
-      width: 100%;
-      padding: 10px;
-      margin: 10px 0 20px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      font-size: 1rem;
-    }
+select,
+input[type="file"],
+button {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+  box-sizing: border-box;
+}
 
-    button {
-      background-color: #007bff;
-      color: white;
-      cursor: pointer;
-      transition: 0.3s ease;
-    }
+button {
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+  transition: 0.3s ease;
+  border: none;
+}
 
-    button:hover {
-      background-color: #0056b3;
-    }
+button:hover {
+  background-color: #0056b3;
+}
 
-    #status {
-      font-size: 0.95rem;
-      color: #333;
-    }
+#status {
+  font-size: 0.95rem;
+  color: #333;
+}
 
-    .success {
-      color: green;
-    }
+.success {
+  color: green;
+}
 
-    .error {
-      color: red;
-    }
+.error {
+  color: red;
+}
+
+/* 📱 Mobile responsiveness */
+@media (max-width: 600px) {
+  body {
+    margin: 20px auto;
+    padding: 15px;
+    width: 95%; /* smaller margin on phones */
+  }
+
+  h2 {
+    font-size: 1.3rem;
+  }
+
+  select,
+  input[type="file"],
+  button {
+    font-size: 0.9rem;
+    padding: 10px;
+  }
+}
